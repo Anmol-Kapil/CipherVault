@@ -17,13 +17,40 @@ SCOPES = [
 ]
 
 # Your Secure Cloud Storage folder
-FOLDER_ID = "1Ey9Rvr1Ot_27SrsQmI1QWsSWMQIEZhMh"
+FOLDER_ID = os.getenv(
+    "GOOGLE_FOLDER_ID"
+)
 
+import json
+import os
+import tempfile
 
 def get_drive_service():
 
+    token_data = os.getenv(
+        "GOOGLE_TOKEN"
+    )
+
+    if not token_data:
+
+        raise Exception(
+            "GOOGLE_TOKEN not found"
+        )
+
+    with tempfile.NamedTemporaryFile(
+        mode="w",
+        suffix=".json",
+        delete=False
+    ) as temp:
+
+        temp.write(
+            token_data
+        )
+
+        token_path = temp.name
+
     creds = Credentials.from_authorized_user_file(
-        "token.json",
+        token_path,
         SCOPES
     )
 

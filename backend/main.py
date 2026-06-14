@@ -5,21 +5,21 @@ from passlib.hash import bcrypt
 from fastapi import Form
 from fastapi import HTTPException
 import secrets
-from backend.encryption.crypto import (
+from encryption.crypto import (
     encrypt_data,
     decrypt_data
 )
 
-from backend.database import (
+from database import (
     SessionLocal,
     engine,
     Base
 )
 
-from backend.models import (
+from models import (
     FileMetadata
 )
-from backend.drive_service import (
+from drive_service import (
     upload_to_drive,
     download_from_drive,
     delete_from_drive
