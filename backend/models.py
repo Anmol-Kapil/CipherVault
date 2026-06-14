@@ -2,7 +2,7 @@ from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
 
-from backend.database import Base
+from database import Base
 
 
 class FileMetadata(Base):
