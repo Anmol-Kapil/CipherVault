@@ -1,0 +1,1 @@
+pip install fastapi uvicorn pycryptodome python-multipart

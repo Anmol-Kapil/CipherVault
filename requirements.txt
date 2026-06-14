@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+sqlalchemy
+pycryptodome
+passlib
+bcrypt==4.0.1
+google-api-python-client
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
