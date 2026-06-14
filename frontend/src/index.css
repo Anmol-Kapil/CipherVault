@@ -52,6 +52,7 @@
 
 body {
   margin: 0;
+  padding: 0;
 }
 
 #root {
@@ -82,6 +83,7 @@ h1 {
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
@@ -91,6 +93,7 @@ h2 {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
@@ -108,4 +111,311 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* ============================================
+   FIXED INPUT STYLES FOR MOBILE
+   ============================================ */
+
+input,
+button,
+textarea,
+select {
+  /* CRITICAL: Remove zoom on focus for better mobile experience */
+  font-size: 16px !important;
+  touch-action: manipulation;
+  
+  /* CRITICAL: Ensure inputs are tap-able on mobile */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 16px;
+  
+  /* CRITICAL: Remove iOS default styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  /* CRITICAL: Fix border-radius */
+  border-radius: 8px;
+  
+  /* CRITICAL: Remove outline on focus (we'll add custom one) */
+  outline: none;
+  border: 2px solid var(--border);
+  
+  /* CRITICAL: Enable immediate cursor */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* CRITICAL: Ensure proper z-index */
+  position: relative;
+  z-index: 1;
+  
+  /* CRITICAL: Fix Safari input issues */
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Password/Text Input Specific Fixes */
+input[type="password"],
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+textarea {
+  /* CRITICAL: Immediate focus response */
+  pointer-events: auto !important;
+  
+  /* CRITICAL: Visible cursor immediately */
+  caret-color: var(--accent);
+  
+  /* CRITICAL: Better mobile font size (prevents zoom) */
+  font-size: 16px !important;
+  
+  /* CRITICAL: Proper padding for touch */
+  padding: 14px 16px;
+  
+  /* CRITICAL: Remove iOS autofill styles */
+  -webkit-autofill,
+  -webkit-autofill:hover,
+  -webkit-autofill:focus,
+  -webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+  }
+  
+  /* CRITICAL: Fix placeholder visibility */
+  color: var(--text);
+  background-color: var(--bg);
+  
+  /* CRITICAL: Disable text zoom on iOS */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  
+  /* CRITICAL: Smooth text input */
+  font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* CRITICAL: Prevent mobile keyboard delay */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Input Focus States */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+  background-color: var(--accent-bg);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+  
+  /* Immediate visual feedback */
+  outline: none;
+}
+
+/* Input Placeholder Styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--text);
+  opacity: 0.6;
+}
+
+/* Remove spinner from number inputs */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Remove search input X button */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Button Styles */
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  
+  /* CRITICAL: Remove iOS button styling */
+  -webkit-appearance: none;
+  appearance: none;
+  
+  /* CRITICAL: Proper touch target size */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 24px;
+  
+  /* CRITICAL: Prevent text selection */
+  user-select: none;
+  -webkit-user-select: none;
+  
+  /* CRITICAL: Smooth interaction */
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+button:active {
+  transform: translateY(0);
+  opacity: 0.85;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+  input,
+  button,
+  textarea,
+  select {
+    /* Larger touch targets on mobile */
+    min-height: 48px;
+    padding: 14px 18px;
+    
+    /* Better mobile spacing */
+    margin-bottom: 12px;
+    
+    /* Prevent autofill zoom */
+    font-size: 16px !important;
+  }
+  
+  input[type="password"],
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  textarea {
+    /* Extra padding for mobile comfort */
+    padding: 16px 18px;
+  }
+  
+  /* Fix iOS Safari input issues */
+  input,
+  textarea,
+  select {
+    -webkit-appearance: none;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+  }
+  
+  /* Prevent viewport zoom on input focus */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    /* Don't zoom on focus */
+    transform: scale(1);
+  }
+  
+  /* Better keyboard handling on mobile */
+  input:focus,
+  textarea:focus {
+    /* Prevent iOS keyboard pushing page up */
+    position: relative;
+    z-index: 100;
+  }
+}
+
+/* Extra mobile optimization for older iOS versions */
+@supports (-webkit-touch-callout: none) {
+  input,
+  button,
+  textarea,
+  select {
+    /* Safari/iOS specific fixes */
+    -webkit-user-select: text;
+    font-size: 16px !important;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Fix iOS keyboard delay */
+  input {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+/* Dark mode input fixes */
+@media (prefers-color-scheme: dark) {
+  input[type="password"],
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="tel"],
+  textarea,
+  select {
+    background-color: var(--code-bg);
+    color: var(--text);
+  }
+  
+  input:focus,
+  textarea:focus,
+  select:focus {
+    background-color: var(--accent-bg);
+    border-color: var(--accent);
+  }
+  
+  /* Fix iOS autofill in dark mode */
+  input[type="password"]:-webkit-autofill,
+  input[type="text"]:-webkit-autofill,
+  input[type="email"]:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px var(--code-bg) inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+    caret-color: var(--accent) !important;
+  }
+}
+
+/* Prevent zoom on double-tap */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  touch-action: manipulation;
+}
+
+/* Remove default input styling */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="tel"],
+textarea {
+  /* Remove all browser defaults */
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  
+  /* Custom border */
+  border: 2px solid var(--border);
+  
+  /* Smooth transitions */
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+/* Ensure cursor is visible on mobile */
+input::selection,
+textarea::selection {
+  background-color: var(--accent);
+  color: white;
+}
+
+input::-moz-selection,
+textarea::-moz-selection {
+  background-color: var(--accent);
+  color: white;
 }
