@@ -1,6 +1,6 @@
 # CipherVault
 
-Secure cloud storage platform with client-side encryption and password-protected file retrieval.
+Secure cloud storage platform with client-side encryption and password protected file retrieval.
 
 ## Features
 - AES-GCM file encryption
