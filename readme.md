@@ -118,16 +118,17 @@ Each uploaded file receives a unique Access ID that is required during download.
 ## 📸 Screenshots
 
 ### Upload Page
+<img width="857" height="876" alt="image" src="https://github.com/user-attachments/assets/2a0f8a72-3873-40cc-8c25-87fe8e81a398" />
 
-Add screenshot here.
+
 
 ### Access ID Generation
+<img width="887" height="300" alt="image" src="https://github.com/user-attachments/assets/d83d523c-ba38-4b33-9671-c491b76caac7" />
 
-Add screenshot here.
 
 ### Download Page
+<img width="855" height="331" alt="image" src="https://github.com/user-attachments/assets/d93a3517-3ce9-4eed-afc4-3954cb3d1bd2" />
 
-Add screenshot here.
 
 ---
 
