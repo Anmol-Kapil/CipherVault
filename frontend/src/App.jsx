@@ -313,6 +313,47 @@ function App() {
 >
   Show My Files
 </button>
+{/* My Files */}
+<div className="upload-section">
+  <h2>My Files</h2>
+
+  {files.length === 0 ? (
+    <p>No files found.</p>
+  ) : (
+    <table
+      style={{
+        width: "100%",
+        borderCollapse: "collapse",
+        marginTop: "15px",
+      }}
+    >
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>Uploaded</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {files.map((file) => (
+          <tr key={file.id}>
+            <td>{file.filename}</td>
+            <td>{file.upload_date}</td>
+            <td>
+              <button
+                className="btn-upload"
+                onClick={() => deleteFile(file.id)}
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
         {/* Download Section */}
         <div className="upload-section">
           <h2>Download File</h2>
