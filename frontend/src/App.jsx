@@ -27,9 +27,7 @@ function App() {
 
   const API =
 "https://ciphervault-h3io.onrender.com";
-  useEffect(() => {
-    loadFiles();
-  }, []);
+  
 
   const loadFiles = async () => {
     try {
@@ -91,7 +89,9 @@ function App() {
       alert("File Uploaded Successfully");
       setFile(null);
       setPassword("");
-      loadFiles();
+      setSearchUsername(username);
+      searchFiles();
+    
     } catch (error) {
       console.error(error);
       alert("Upload Failed");
