@@ -35,3 +35,4 @@ class FileMetadata(Base):
     upload_date = Column(
         String
     )
+    username = Column(String, index=True)

@@ -56,6 +56,7 @@ def home():
 @app.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
+    username: str = Form(...),
     password: str = Form(...)
 ):
     filename = file.filename
@@ -113,18 +114,18 @@ async def upload_file(
     db = SessionLocal()
 
     new_file = FileMetadata(
-        access_id=access_id,
-        filename=filename,
-        mime_type=mime_type,
-        drive_file_id=drive_file_id,
-        password_hash=password_hash,
-        upload_date=str(
-            datetime.now()
-        )
+         username=username,
+    access_id=access_id,
+    filename=filename,
+    mime_type=mime_type,
+    drive_file_id=drive_file_id,
+    password_hash=password_hash,
+    upload_date=str(datetime.now())
     )
 
     db.add(new_file)
     db.commit()
+    print("Saved:", username, filename)
     db.close()
 
     os.remove(temp_file)
@@ -240,24 +241,24 @@ def download_file(
     )
 
 
-@app.get("/files")
-def get_files():
+@app.get("/user-files/{username}")
+def get_user_files(username: str):
 
     db = SessionLocal()
 
-    files = db.query(
-        FileMetadata
-    ).all()
+    files = (
+        db.query(FileMetadata)
+        .filter(FileMetadata.username == username)
+        .all()
+    )
 
     result = []
 
     for file in files:
-
         result.append({
             "id": file.id,
             "filename": file.filename,
             "mime_type": file.mime_type,
-            "drive_file_id": file.drive_file_id,
             "upload_date": file.upload_date
         })
 
@@ -265,7 +266,27 @@ def get_files():
 
     return result
 
+@app.get("/files")
+def get_files():
 
+    db = SessionLocal()
+
+    files = db.query(FileMetadata).all()
+
+    result = []
+
+    for file in files:
+        result.append({
+            "id": file.id,
+            "username": file.username,
+            "filename": file.filename,
+            "mime_type": file.mime_type,
+            "upload_date": file.upload_date
+        })
+
+    db.close()
+
+    return result
 @app.delete("/files/{file_id}")
 def delete_file(file_id: int):
 

@@ -27,31 +27,37 @@ import tempfile
 
 def get_drive_service():
 
-    token_data = os.getenv(
-        "GOOGLE_TOKEN"
-    )
+    token_data = os.getenv("GOOGLE_TOKEN")
 
-    if not token_data:
+    # ---------- Render ----------
+    if token_data:
 
-        raise Exception(
-            "GOOGLE_TOKEN not found"
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            suffix=".json",
+            delete=False
+        ) as temp:
+
+            temp.write(token_data)
+            token_path = temp.name
+
+        creds = Credentials.from_authorized_user_file(
+            token_path,
+            SCOPES
         )
 
-    with tempfile.NamedTemporaryFile(
-        mode="w",
-        suffix=".json",
-        delete=False
-    ) as temp:
+    # ---------- Local ----------
+    else:
 
-        temp.write(
-            token_data
-        )
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    TOKEN_PATH = os.path.join(BASE_DIR, "token.json")
 
-        token_path = temp.name
+    if not os.path.exists(TOKEN_PATH):
+        raise Exception(f"token.json not found at {TOKEN_PATH}")
 
     creds = Credentials.from_authorized_user_file(
-        token_path,
-        SCOPES
+    TOKEN_PATH,
+    SCOPES
     )
 
     service = build(
@@ -61,7 +67,6 @@ def get_drive_service():
     )
 
     return service
-
 
 def upload_to_drive(filepath):
 

@@ -4,6 +4,8 @@ import "./App.css";
 
 function App() {
   const [file, setFile] = useState(null);
+  const [username, setUsername] = useState("");
+  const [searchUsername, setSearchUsername] = useState("");
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
@@ -37,7 +39,25 @@ function App() {
       console.error("Error loading files:", error);
     }
   };
+  const searchFiles = async () => {
 
+  try {
+
+    const response = await axios.get(
+      `${API}/user-files/${searchUsername}`
+    );
+
+    setFiles(response.data);
+
+  }
+
+  catch (error) {
+
+    console.log(error);
+
+  }
+
+  };
   const deleteFile = async (fileId) => {
     const confirmDelete = window.confirm("Delete this file?");
     if (!confirmDelete) return;
@@ -63,6 +83,7 @@ function App() {
       const formData = new FormData();
 
       formData.append("file", file);
+      formData.append("username", username);
       formData.append("password", password);
 
       const response = await axios.post(`${API}/upload`, formData);
@@ -153,7 +174,22 @@ function App() {
             </div>
           </div>
         </div>
-
+<input
+  type="text"
+  placeholder="Enter Username"
+  value={username}
+  onChange={(e) => setUsername(e.target.value)}
+  style={{
+    width: "100%",
+    padding: "12px",
+    marginTop: "10px",
+    marginBottom: "10px",
+    border: "2px solid #333",
+    borderRadius: "8px",
+    fontSize: "16px",
+    boxSizing: "border-box"
+  }}
+/>
         {/* Upload Section */}
         <div className="upload-section">
           <h2>Upload File</h2>
@@ -254,7 +290,29 @@ function App() {
             </button>
           </div>
         )}
+        <input
+  type="text"
+  placeholder="Enter Username"
+  value={searchUsername}
+  onChange={(e) =>
+    setSearchUsername(e.target.value)
+  }
+  style={{
+    width: "100%",
+    padding: "12px",
+    marginBottom: "10px",
+    border: "2px solid #333",
+    borderRadius: "8px",
+    fontSize: "16px"
+  }}
+/>
 
+<button
+  className="btn-upload"
+  onClick={searchFiles}
+>
+  Show My Files
+</button>
         {/* Download Section */}
         <div className="upload-section">
           <h2>Download File</h2>
