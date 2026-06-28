@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 import io
 import os
+import tempfile
 
 load_dotenv()
 
@@ -16,20 +17,16 @@ SCOPES = [
     "https://www.googleapis.com/auth/drive.file"
 ]
 
-# Your Secure Cloud Storage folder
-FOLDER_ID = os.getenv(
-    "GOOGLE_FOLDER_ID"
-)
+FOLDER_ID = os.getenv("GOOGLE_FOLDER_ID")
 
-import json
-import os
-import tempfile
 
 def get_drive_service():
 
     token_data = os.getenv("GOOGLE_TOKEN")
 
-    # ---------- Render ----------
+    # ---------------------------
+    # Render
+    # ---------------------------
     if token_data:
 
         with tempfile.NamedTemporaryFile(
@@ -46,19 +43,31 @@ def get_drive_service():
             SCOPES
         )
 
-    # ---------- Local ----------
+    # ---------------------------
+    # Local
+    # ---------------------------
     else:
 
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    TOKEN_PATH = os.path.join(BASE_DIR, "token.json")
+        BASE_DIR = os.path.dirname(
+            os.path.dirname(
+                os.path.abspath(__file__)
+            )
+        )
 
-    if not os.path.exists(TOKEN_PATH):
-        raise Exception(f"token.json not found at {TOKEN_PATH}")
+        TOKEN_PATH = os.path.join(
+            BASE_DIR,
+            "token.json"
+        )
 
-    creds = Credentials.from_authorized_user_file(
-    TOKEN_PATH,
-    SCOPES
-    )
+        if not os.path.exists(TOKEN_PATH):
+            raise Exception(
+                f"token.json not found at {TOKEN_PATH}"
+            )
+
+        creds = Credentials.from_authorized_user_file(
+            TOKEN_PATH,
+            SCOPES
+        )
 
     service = build(
         "drive",
@@ -67,6 +76,7 @@ def get_drive_service():
     )
 
     return service
+
 
 def upload_to_drive(filepath):
 
