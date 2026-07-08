@@ -1,67 +1,90 @@
 # 🔐 CipherVault
 
-CipherVault is a secure cloud storage platform that enables users to upload, store, and retrieve files securely using AES-GCM encryption, password-protected downloads, and unique Access IDs.
+> A secure cloud storage platform built with **React**, **FastAPI**, **Supabase PostgreSQL**, and **Google Drive API**, featuring AES-GCM encryption, password-protected downloads, and unique Access IDs.
 
-The application is built using React, FastAPI, SQLite, Google Drive API, and deployed using Vercel and Render.
-
----
-
-## 🚀 Features
-
-- Secure file upload and download
-- AES-GCM encryption for file protection
-- Password-protected file retrieval
-- Unique Access ID generation for each file
-- Google Drive cloud storage integration
-- Metadata management using SQLite
-- Responsive React frontend
-- FastAPI backend with REST APIs
-- Deployed on Vercel and Render
+![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)
+![PostgreSQL](https://img.shields.io/badge/Database-Supabase_PostgreSQL-3ECF8E?logo=supabase)
+![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
+![License](https://img.shields.io/badge/License-Educational-green)
 
 ---
 
-## 🏗️ System Architecture
+# 📖 Overview
+
+CipherVault is a secure cloud storage platform that encrypts every uploaded file before storing it in Google Drive.
+
+Unlike traditional cloud storage systems, files are never stored in plain form. Each uploaded file is encrypted using **AES-GCM**, protected using a user-defined password, assigned a unique **Access ID**, and securely stored in Google Drive.
+
+The encrypted file metadata—including username, filename, password hash, and Drive File ID—is stored in **Supabase PostgreSQL**, enabling secure retrieval and user-specific file management.
+
+---
+
+# ✨ Features
+
+- 🔒 AES-GCM File Encryption
+- 🔑 Password-Protected Downloads
+- 🆔 Unique Access ID Generation
+- 👤 Username-Based File Dashboard
+- ☁️ Google Drive Cloud Storage
+- 🗄️ Supabase PostgreSQL Metadata Storage
+- 🗑️ File Deletion
+- 📱 Responsive React Interface
+- ⚡ FastAPI REST APIs
+- 🌐 Cloud Deployment (Vercel + Render)
+
+---
+
+# 🏗️ System Architecture
 
 ```text
-User
-   │
-   ▼
-React Frontend (Vercel)
-   │
-   ▼
-FastAPI Backend (Render)
-   │
-   ├── AES-GCM Encryption
-   │
-   ├── SQLite Metadata Database
-   │
-   ▼
-Google Drive Storage
+                    User
+                      │
+                      ▼
+          React Frontend (Vercel)
+                      │
+                REST API Calls
+                      │
+                      ▼
+          FastAPI Backend (Render)
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+        ▼                           ▼
+ AES-GCM Encryption         SQLAlchemy ORM
+        │                           │
+        ▼                           ▼
+ Google Drive Storage      Supabase PostgreSQL
+ (Encrypted Files)          (Metadata)
 ```
 
 ---
 
-## ⚙️ Tech Stack
+# 🛠️ Tech Stack
 
-### Frontend
+## Frontend
 
 - React.js
 - Axios
-- CSS
+- CSS3
 
-### Backend
+## Backend
 
 - FastAPI
 - Python
-- SQLAlchemy
-- SQLite
+- SQLAlchemy ORM
+- Passlib (bcrypt)
 
-### Security
+## Database
+
+- Supabase PostgreSQL
+
+## Security
 
 - AES-GCM Encryption
 - bcrypt Password Hashing
 
-### Cloud Services
+## Cloud Services
 
 - Google Drive API
 - Render
@@ -69,101 +92,132 @@ Google Drive Storage
 
 ---
 
-## 📂 Upload Workflow
+# 🚀 Upload Workflow
 
-1. User selects a file and enters a password.
-2. Frontend sends file and password to FastAPI.
-3. Backend generates a unique Access ID.
-4. Password is hashed using bcrypt.
-5. File is encrypted using AES-GCM.
-6. Encrypted file is uploaded to Google Drive.
-7. Metadata is stored in SQLite.
-8. Access ID is returned to the user.
-
----
-
-## 📥 Download Workflow
-
-1. User enters Access ID and password.
-2. Backend validates Access ID.
-3. Password hash is verified using bcrypt.
-4. Encrypted file is downloaded from Google Drive.
-5. File is decrypted using AES-GCM.
-6. Original file is returned to the user.
+1. User enters a username.
+2. User selects a file.
+3. User sets a download password.
+4. React sends the file to FastAPI.
+5. Backend generates a unique Access ID.
+6. Password is hashed using bcrypt.
+7. File is encrypted using AES-GCM.
+8. Encrypted file is uploaded to Google Drive.
+9. Metadata is stored in Supabase PostgreSQL.
+10. Access ID is returned to the user.
 
 ---
 
-## 🔒 Security Features
+# 📥 Download Workflow
 
-### AES-GCM Encryption
+1. User enters Access ID.
+2. User enters password.
+3. FastAPI validates the Access ID.
+4. Password hash is verified.
+5. Encrypted file is downloaded from Google Drive.
+6. File is decrypted.
+7. Original file is returned to the user.
 
-Files are encrypted before storage using AES-GCM, which provides:
+---
+
+# 📡 REST API Endpoints
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/upload` | Upload encrypted file |
+| POST | `/download` | Download & decrypt file |
+| GET | `/user-files/{username}` | Retrieve files uploaded by a user |
+| GET | `/files` | List stored metadata |
+| DELETE | `/files/{id}` | Delete a file |
+
+---
+
+# 🔐 Security Features
+
+## AES-GCM Encryption
+
+Every uploaded file is encrypted before storage, providing:
 
 - Confidentiality
-- Data integrity
+- Integrity
 - Authentication
 
-### Password Protection
+---
 
-Passwords are never stored in plain text.
+## Password Protection
 
-Passwords are securely hashed using bcrypt before being saved to the database.
+Passwords are never stored in plaintext.
 
-### Access ID Retrieval
-
-Each uploaded file receives a unique Access ID that is required during download.
+They are securely hashed using **bcrypt** before being stored in PostgreSQL.
 
 ---
 
-## 📸 Screenshots
+## Access ID
 
-### Upload Page
-<img width="857" height="876" alt="image" src="https://github.com/user-attachments/assets/2a0f8a72-3873-40cc-8c25-87fe8e81a398" />
-
-
-
-### Access ID Generation
-<img width="887" height="300" alt="image" src="https://github.com/user-attachments/assets/d83d523c-ba38-4b33-9671-c491b76caac7" />
-
-
-### Download Page
-<img width="855" height="331" alt="image" src="https://github.com/user-attachments/assets/d93a3517-3ce9-4eed-afc4-3954cb3d1bd2" />
-
+Every uploaded file receives a randomly generated Access ID that is required for downloading the file.
 
 ---
 
-## 🌐 Deployment
+## Cloud Storage
 
-### Frontend
+Only encrypted files are stored in Google Drive.
 
-Deployed on:
+Metadata is stored separately in Supabase PostgreSQL.
+
+---
+
+# 📸 Screenshots
+
+## Upload Page
+
+<img width="857" height="876" alt="Upload" src="https://github.com/user-attachments/assets/2a0f8a72-3873-40cc-8c25-87fe8e81a398" />
+
+---
+
+## Access ID Generation
+
+<img width="887" height="300" alt="Access ID" src="https://github.com/user-attachments/assets/d83d523c-ba38-4b33-9671-c491b76caac7" />
+
+---
+
+## Download Page
+
+<img width="855" height="331" alt="Download" src="https://github.com/user-attachments/assets/d93a3517-3ce9-4eed-afc4-3954cb3d1bd2" />
+
+---
+
+# ☁️ Deployment
+
+## Frontend
 
 - Vercel
 
-### Backend
-
-Deployed on:
+## Backend
 
 - Render
 
-### Storage
+## Database
+
+- Supabase PostgreSQL
+
+## Storage
 
 - Google Drive API
 
 ---
 
-## 🛠️ Installation
+# ⚙️ Installation
 
-### Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/Anmol-Kapil/CipherVault.git
+
 cd CipherVault
 ```
 
 ---
 
-### Backend Setup
+## Backend Setup
 
 ```bash
 cd backend
@@ -175,13 +229,13 @@ uvicorn main:app --reload
 
 Backend runs on:
 
-```text
+```
 http://127.0.0.1:8000
 ```
 
 ---
 
-### Frontend Setup
+## Frontend Setup
 
 ```bash
 cd frontend
@@ -193,91 +247,122 @@ npm run dev
 
 Frontend runs on:
 
-```text
+```
 http://localhost:5173
 ```
 
 ---
 
-## 🔑 Environment Variables
+# 🔑 Environment Variables
 
-Create a `.env` file:
-
-```env
-GOOGLE_FOLDER_ID=your_folder_id
-```
-
-For production deployment configure:
+Create a `.env` file inside the backend folder.
 
 ```env
-GOOGLE_FOLDER_ID
-GOOGLE_CREDENTIALS
-GOOGLE_TOKEN
-DATABASE_URL
+DATABASE_URL=your_supabase_database_url
+
+GOOGLE_FOLDER_ID=your_google_drive_folder
+
+GOOGLE_TOKEN=your_google_token_json
 ```
 
-inside Render Environment Variables.
+Never commit these credentials to GitHub.
 
 ---
 
-## 🎯 Challenges Faced
+# 💡 Challenges Faced
 
-### Secure File Retrieval
+## 1. Secure Cloud Storage
 
-Initially files could be downloaded without sufficient access control.
+### Problem
 
-**Solution:**
+Google Drive stores uploaded files as normal files.
 
-- Implemented unique Access IDs
-- Added password-protected downloads
-- Used bcrypt password hashing
+### Solution
 
----
-
-### Cloud Deployment
-
-Local Google Drive authentication files could not be exposed publicly.
-
-**Solution:**
-
-- Moved credentials to environment variables
-- Configured secure deployment on Render
+Implemented AES-GCM encryption before uploading and decrypted files only after successful authentication.
 
 ---
 
-### Frontend-Backend Communication
+## 2. Cloud Deployment
 
-After deployment API requests failed due to localhost URLs and CORS restrictions.
+### Problem
 
-**Solution:**
+Managing Google Drive credentials securely on Render.
 
-- Updated production API endpoints
-- Configured FastAPI CORS middleware
+### Solution
+
+Moved credentials into environment variables and securely configured the backend.
 
 ---
 
-## 🔮 Future Improvements
+## 3. Database Migration
+
+### Problem
+
+Needed persistent metadata storage suitable for production.
+
+### Solution
+
+Migrated metadata storage to **Supabase PostgreSQL** using SQLAlchemy ORM without changing the application's business logic.
+
+---
+
+## 4. Frontend–Backend Communication
+
+### Problem
+
+API requests failed after deployment due to localhost URLs and CORS restrictions.
+
+### Solution
+
+Configured FastAPI CORS middleware and updated the frontend to use production API endpoints.
+
+---
+
+# 🚀 Future Improvements
 
 - JWT Authentication
 - Google OAuth Login
-- File Expiration Links
+- Email Verification
+- File Sharing
+- Expiring Download Links
 - One-Time Downloads
-- PostgreSQL Migration
-- User Dashboards
-- File Sharing with Expiry
+- Upload Progress Bar
+- Drag & Drop Upload
+- Folder Support
 - Download Analytics
 
 ---
 
-## 👨‍💻 Author
+# ⭐ Key Highlights
 
-**Anmol Kapil**
-
-- GitHub: https://github.com/Anmol-Kapil
-- LinkedIn: https://linkedin.com/in/anmol-kapil-4b4339263
+- Full Stack React + FastAPI Application
+- RESTful API Architecture
+- AES-GCM Encryption
+- Password Hashing with bcrypt
+- Google Drive API Integration
+- SQLAlchemy ORM
+- Supabase PostgreSQL
+- Cloud Deployment
+- Production Environment Variables
+- Responsive UI
 
 ---
 
-## 📜 License
+# 👨‍💻 Author
 
-This project is developed for educational and portfolio purposes.
+## Anmol Kapil
+
+**GitHub**
+
+https://github.com/Anmol-Kapil
+
+**LinkedIn**
+
+https://linkedin.com/in/anmol-kapil-4b4339263
+
+---
+
+# 📜 License
+
+This project is developed for educational, learning, and portfolio purposes.
