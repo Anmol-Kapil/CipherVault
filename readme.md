@@ -169,19 +169,23 @@ Metadata is stored separately in Supabase PostgreSQL.
 
 ## Upload Page
 
-<img width="857" height="876" alt="Upload" src="https://github.com/user-attachments/assets/2a0f8a72-3873-40cc-8c25-87fe8e81a398" />
+<img width="891" height="662" alt="image" src="https://github.com/user-attachments/assets/c155da3e-6506-4a70-8dce-3d65463d1603" />
+<img width="916" height="679" alt="image" src="https://github.com/user-attachments/assets/a855c895-95c0-452d-b6ca-cc24e86b6d78" />
+<img width="839" height="536" alt="image" src="https://github.com/user-attachments/assets/0d94b117-b23b-4c01-a249-d9b83fee4d47" />
 
 ---
 
 ## Access ID Generation
 
-<img width="887" height="300" alt="Access ID" src="https://github.com/user-attachments/assets/d83d523c-ba38-4b33-9671-c491b76caac7" />
+<img width="827" height="291" alt="image" src="https://github.com/user-attachments/assets/18cbb16e-6c15-401e-a02d-97a601f80b3d" />
+
 
 ---
 
 ## Download Page
 
-<img width="855" height="331" alt="Download" src="https://github.com/user-attachments/assets/d93a3517-3ce9-4eed-afc4-3954cb3d1bd2" />
+<img width="870" height="363" alt="image" src="https://github.com/user-attachments/assets/faae2a8d-88f4-4d70-80b9-0d932114c27d" />
+
 
 ---
 
