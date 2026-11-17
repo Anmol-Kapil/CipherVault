@@ -1,421 +1,79 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #262c27;
+  background: #f8f9f6;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  font-size: 14px;
+  color-scheme: light;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
-  margin: 0;
-  padding: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+* {
   box-sizing: border-box;
 }
-
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  color: inherit;
+}
+button,
+input,
+select {
+  outline-offset: 4px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #497455;
+}
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-
+h2,
+h3,
 p {
   margin: 0;
 }
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+button svg {
+  flex-shrink: 0;
 }
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
-
-/* ============================================
-   FIXED INPUT STYLES FOR MOBILE
-   ============================================ */
-
-input,
-button,
-textarea,
-select {
-  /* CRITICAL: Remove zoom on focus for better mobile experience */
-  font-size: 16px !important;
-  touch-action: manipulation;
-  
-  /* CRITICAL: Ensure inputs are tap-able on mobile */
-  min-height: 44px;
-  min-width: 44px;
-  padding: 12px 16px;
-  
-  /* CRITICAL: Remove iOS default styling */
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  
-  /* CRITICAL: Fix border-radius */
-  border-radius: 8px;
-  
-  /* CRITICAL: Remove outline on focus (we'll add custom one) */
-  outline: none;
-  border: 2px solid var(--border);
-  
-  /* CRITICAL: Enable immediate cursor */
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-  /* CRITICAL: Ensure proper z-index */
-  position: relative;
-  z-index: 1;
-  
-  /* CRITICAL: Fix Safari input issues */
-  -webkit-user-select: text;
-  user-select: text;
-}
-
-/* Password/Text Input Specific Fixes */
-input[type="password"],
-input[type="text"],
-input[type="email"],
-input[type="number"],
-input[type="tel"],
-textarea {
-  /* CRITICAL: Immediate focus response */
-  pointer-events: auto !important;
-  
-  /* CRITICAL: Visible cursor immediately */
-  caret-color: var(--accent);
-  
-  /* CRITICAL: Better mobile font size (prevents zoom) */
-  font-size: 16px !important;
-  
-  /* CRITICAL: Proper padding for touch */
-  padding: 14px 16px;
-  
-  /* CRITICAL: Remove iOS autofill styles */
-  -webkit-autofill,
-  -webkit-autofill:hover,
-  -webkit-autofill:focus,
-  -webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px white inset !important;
-    -webkit-text-fill-color: var(--text) !important;
-  }
-  
-  /* CRITICAL: Fix placeholder visibility */
-  color: var(--text);
-  background-color: var(--bg);
-  
-  /* CRITICAL: Disable text zoom on iOS */
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  
-  /* CRITICAL: Smooth text input */
-  font-smoothing: antialiased;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  
-  /* CRITICAL: Prevent mobile keyboard delay */
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Input Focus States */
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: var(--accent);
-  background-color: var(--accent-bg);
-  box-shadow: 0 0 0 3px var(--accent-bg);
-  
-  /* Immediate visual feedback */
-  outline: none;
-}
-
-/* Input Placeholder Styling */
-input::placeholder,
-textarea::placeholder {
-  color: var(--text);
-  opacity: 0.6;
-}
-
-/* Remove spinner from number inputs */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-/* Remove search input X button */
-input[type="search"]::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-/* Button Styles */
 button {
-  background: var(--accent);
-  color: white;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  
-  /* CRITICAL: Remove iOS button styling */
-  -webkit-appearance: none;
-  appearance: none;
-  
-  /* CRITICAL: Proper touch target size */
-  min-height: 44px;
-  min-width: 44px;
-  padding: 12px 24px;
-  
-  /* CRITICAL: Prevent text selection */
-  user-select: none;
-  -webkit-user-select: none;
-  
-  /* CRITICAL: Smooth interaction */
-  transition: all 0.2s ease;
+  border: 0;
+  background: none;
 }
-
-button:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
+input,
+select {
+  min-width: 0;
 }
-
-button:active {
-  transform: translateY(0);
-  opacity: 0.85;
+::selection {
+  background: #d1e2b5;
 }
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Mobile-specific fixes */
-@media (max-width: 768px) {
-  input,
-  button,
-  textarea,
-  select {
-    /* Larger touch targets on mobile */
-    min-height: 48px;
-    padding: 14px 18px;
-    
-    /* Better mobile spacing */
-    margin-bottom: 12px;
-    
-    /* Prevent autofill zoom */
-    font-size: 16px !important;
-  }
-  
-  input[type="password"],
-  input[type="text"],
-  input[type="email"],
-  input[type="number"],
-  input[type="tel"],
-  textarea {
-    /* Extra padding for mobile comfort */
-    padding: 16px 18px;
-  }
-  
-  /* Fix iOS Safari input issues */
-  input,
-  textarea,
-  select {
-    -webkit-appearance: none;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
-  }
-  
-  /* Prevent viewport zoom on input focus */
-  input:focus,
-  textarea:focus,
-  select:focus {
-    /* Don't zoom on focus */
-    transform: scale(1);
-  }
-  
-  /* Better keyboard handling on mobile */
-  input:focus,
-  textarea:focus {
-    /* Prevent iOS keyboard pushing page up */
-    position: relative;
-    z-index: 100;
-  }
-}
-
-/* Extra mobile optimization for older iOS versions */
-@supports (-webkit-touch-callout: none) {
-  input,
-  button,
-  textarea,
-  select {
-    /* Safari/iOS specific fixes */
-    -webkit-user-select: text;
-    font-size: 16px !important;
-    letter-spacing: 0.5px;
-  }
-  
-  /* Fix iOS keyboard delay */
-  input {
-    -webkit-appearance: none;
-    appearance: none;
-  }
-}
-
-/* Dark mode input fixes */
-@media (prefers-color-scheme: dark) {
-  input[type="password"],
-  input[type="text"],
-  input[type="email"],
-  input[type="number"],
-  input[type="tel"],
-  textarea,
-  select {
-    background-color: var(--code-bg);
-    color: var(--text);
-  }
-  
-  input:focus,
-  textarea:focus,
-  select:focus {
-    background-color: var(--accent-bg);
-    border-color: var(--accent);
-  }
-  
-  /* Fix iOS autofill in dark mode */
-  input[type="password"]:-webkit-autofill,
-  input[type="text"]:-webkit-autofill,
-  input[type="email"]:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px var(--code-bg) inset !important;
-    -webkit-text-fill-color: var(--text) !important;
-    caret-color: var(--accent) !important;
-  }
-}
-
-/* Prevent zoom on double-tap */
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
-  touch-action: manipulation;
-}
-
-/* Remove default input styling */
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="number"],
-input[type="tel"],
-textarea {
-  /* Remove all browser defaults */
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-  
-  /* Custom border */
-  border: 2px solid var(--border);
-  
-  /* Smooth transitions */
-  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
-}
-
-/* Ensure cursor is visible on mobile */
-input::selection,
-textarea::selection {
-  background-color: var(--accent);
-  color: white;
-}
-
-input::-moz-selection,
-textarea::-moz-selection {
-  background-color: var(--accent);
-  color: white;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
 }

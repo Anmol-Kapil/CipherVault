@@ -1,38 +1,13 @@
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-
-from database import Base
-
+from sqlalchemy import Column, Integer, String
+from backend.database import Base
 
 class FileMetadata(Base):
-
-    __tablename__ = "files"
-    id = Column(
-        Integer,
-        primary_key=True,
-        index=True
-    )
-
-    access_id = Column(
-        String,
-        unique=True
-    )
-
-    filename = Column(
-        String
-    )
-
-    mime_type = Column(
-        String
-    )
-
-    drive_file_id = Column(
-        String
-    )
-    password_hash = Column(String)
-
-    upload_date = Column(
-        String
-    )
-    username = Column(String, index=True)
+    __tablename__ = 'files'
+    id = Column(Integer, primary_key=True)
+    access_id = Column(String, unique=True, nullable=False)
+    username = Column(String, index=True, nullable=False)
+    filename = Column(String, nullable=False)
+    mime_type = Column(String, nullable=False)
+    size = Column(Integer, nullable=False)
+    password_hash = Column(String, nullable=False)
+    upload_date = Column(String, nullable=False)

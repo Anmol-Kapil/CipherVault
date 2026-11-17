@@ -1,372 +1,243 @@
-# 🔐 CipherVault
+# CipherVault
 
-> A secure cloud storage platform built with **React**, **FastAPI**, **Supabase PostgreSQL**, and **Google Drive API**, featuring AES-GCM encryption, password-protected downloads, and unique Access IDs.
+### Keep it close. Keep it yours.
 
-![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react)
-![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)
-![PostgreSQL](https://img.shields.io/badge/Database-Supabase_PostgreSQL-3ECF8E?logo=supabase)
-![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
-![License](https://img.shields.io/badge/License-Educational-green)
+A private file vault for your own computer, with a calm sage interface, encrypted local storage, and password-protected retrieval. Built with React, FastAPI, SQLite, and AES-256-GCM.
 
----
+**Runs locally. No cloud account, Google Drive token, hosted database, or environment file required.** After installing dependencies, the application works without internet access. There are no deployment steps or hosting integrations.
 
-# 📖 Overview
+![CipherVault overview with local vault statistics and recent files](docs/screenshots/01-overview.png)
 
-CipherVault is a secure cloud storage platform that encrypts every uploaded file before storing it in Google Drive.
+## What you can do
 
-Unlike traditional cloud storage systems, files are never stored in plain form. Each uploaded file is encrypted using **AES-GCM**, protected using a user-defined password, assigned a unique **Access ID**, and securely stored in Google Drive.
+- **See your vault at a glance:** file count, total original file size, encryption information, and recent uploads.
+- **Upload any file type:** browse or drag and drop one file up to 25 MB, add an owner label, and set its password.
+- **Save your access ID:** copy the generated ID from a confirmation that stays open until you dismiss it.
+- **Find your files:** search filenames and filter by owner in the local file collection.
+- **Retrieve originals:** enter the access ID and password to decrypt and download with the original filename.
+- **Delete deliberately:** confirm permanent deletion with the file password.
+- **Use a smaller screen:** responsive navigation, stacked forms, and horizontally scrollable file tables.
+- **Understand failures:** inline messages for incorrect passwords, missing files, oversized uploads, and an offline backend.
 
-The encrypted file metadata—including username, filename, password hash, and Drive File ID—is stored in **Supabase PostgreSQL**, enabling secure retrieval and user-specific file management.
+## Run locally
 
----
+### Prerequisites
 
-# ✨ Features
+- Python **3.10 or newer**; tested with Python 3.10.11.
+- Node.js **22.12 or newer**; tested with Node.js 22.19.0, and npm.
+- Git to clone the repository.
 
-- 🔒 AES-GCM File Encryption
-- 🔑 Password-Protected Downloads
-- 🆔 Unique Access ID Generation
-- 👤 Username-Based File Dashboard
-- ☁️ Google Drive Cloud Storage
-- 🗄️ Supabase PostgreSQL Metadata Storage
-- 🗑️ File Deletion
-- 📱 Responsive React Interface
-- ⚡ FastAPI REST APIs
-- 🌐 Cloud Deployment (Vercel + Render)
+### 1. Clone and install
 
----
-
-# 🏗️ System Architecture
-
-```text
-                    User
-                      │
-                      ▼
-          React Frontend (Vercel)
-                      │
-                REST API Calls
-                      │
-                      ▼
-          FastAPI Backend (Render)
-                      │
-        ┌─────────────┴─────────────┐
-        │                           │
-        ▼                           ▼
- AES-GCM Encryption         SQLAlchemy ORM
-        │                           │
-        ▼                           ▼
- Google Drive Storage      Supabase PostgreSQL
- (Encrypted Files)          (Metadata)
-```
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
-
-- React.js
-- Axios
-- CSS3
-
-## Backend
-
-- FastAPI
-- Python
-- SQLAlchemy ORM
-- Passlib (bcrypt)
-
-## Database
-
-- Supabase PostgreSQL
-
-## Security
-
-- AES-GCM Encryption
-- bcrypt Password Hashing
-
-## Cloud Services
-
-- Google Drive API
-- Render
-- Vercel
-
----
-
-# 🚀 Upload Workflow
-
-1. User enters a username.
-2. User selects a file.
-3. User sets a download password.
-4. React sends the file to FastAPI.
-5. Backend generates a unique Access ID.
-6. Password is hashed using bcrypt.
-7. File is encrypted using AES-GCM.
-8. Encrypted file is uploaded to Google Drive.
-9. Metadata is stored in Supabase PostgreSQL.
-10. Access ID is returned to the user.
-
----
-
-# 📥 Download Workflow
-
-1. User enters Access ID.
-2. User enters password.
-3. FastAPI validates the Access ID.
-4. Password hash is verified.
-5. Encrypted file is downloaded from Google Drive.
-6. File is decrypted.
-7. Original file is returned to the user.
-
----
-
-# 📡 REST API Endpoints
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/upload` | Upload encrypted file |
-| POST | `/download` | Download & decrypt file |
-| GET | `/user-files/{username}` | Retrieve files uploaded by a user |
-| GET | `/files` | List stored metadata |
-| DELETE | `/files/{id}` | Delete a file |
-
----
-
-# 🔐 Security Features
-
-## AES-GCM Encryption
-
-Every uploaded file is encrypted before storage, providing:
-
-- Confidentiality
-- Integrity
-- Authentication
-
----
-
-## Password Protection
-
-Passwords are never stored in plaintext.
-
-They are securely hashed using **bcrypt** before being stored in PostgreSQL.
-
----
-
-## Access ID
-
-Every uploaded file receives a randomly generated Access ID that is required for downloading the file.
-
----
-
-## Cloud Storage
-
-Only encrypted files are stored in Google Drive.
-
-Metadata is stored separately in Supabase PostgreSQL.
-
----
-
-# 📸 Screenshots
-
-## Upload Page
-
-<img width="891" height="662" alt="image" src="https://github.com/user-attachments/assets/c155da3e-6506-4a70-8dce-3d65463d1603" />
-<img width="916" height="679" alt="image" src="https://github.com/user-attachments/assets/a855c895-95c0-452d-b6ca-cc24e86b6d78" />
-<img width="839" height="536" alt="image" src="https://github.com/user-attachments/assets/0d94b117-b23b-4c01-a249-d9b83fee4d47" />
-
----
-
-## Access ID Generation
-
-<img width="827" height="291" alt="image" src="https://github.com/user-attachments/assets/18cbb16e-6c15-401e-a02d-97a601f80b3d" />
-
-
----
-
-## Download Page
-
-<img width="870" height="363" alt="image" src="https://github.com/user-attachments/assets/faae2a8d-88f4-4d70-80b9-0d932114c27d" />
-
-
----
-
-# ☁️ Deployment
-
-## Frontend
-
-- Vercel
-
-## Backend
-
-- Render
-
-## Database
-
-- Supabase PostgreSQL
-
-## Storage
-
-- Google Drive API
-
----
-
-# ⚙️ Installation
-
-## Clone Repository
-
-```bash
+```powershell
 git clone https://github.com/Anmol-Kapil/CipherVault.git
-
 cd CipherVault
+python -m venv .venv
 ```
 
----
+On **Windows PowerShell**, install Python dependencies using the virtual environment directly; activation is unnecessary:
 
-## Backend Setup
-
-```bash
-cd backend
-
-pip install -r requirements.txt
-
-uvicorn main:app --reload
-```
-
-Backend runs on:
-
-```
-http://127.0.0.1:8000
-```
-
----
-
-## Frontend Setup
-
-```bash
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 cd frontend
+npm ci
+cd ..
+```
 
-npm install
+On **macOS or Linux**, use `.venv/bin/python` in place of `.\.venv\Scripts\python.exe`:
 
+```bash
+.venv/bin/python -m pip install -r requirements.txt
+cd frontend
+npm ci
+cd ..
+```
+
+### 2. Start the backend — terminal one
+
+From the **repository root**, on Windows:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+```
+
+On macOS or Linux:
+
+```bash
+.venv/bin/python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+```
+
+The first start creates the SQLite database, encrypted-file directory, and persistent encryption key automatically. Local API documentation is at [127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+### 3. Start the frontend — terminal two
+
+From the repository root:
+
+```powershell
+cd frontend
 npm run dev
 ```
 
-Frontend runs on:
+Open **[http://127.0.0.1:5173](http://127.0.0.1:5173)**. The connection badge should read **Local vault connected**. Both servers bind to loopback. Stop each with **Ctrl+C**.
 
+Use the Vite development server for this local application. Its `/api` proxy forwards to port 8000; opening a built HTML file directly will not provide that proxy.
+
+## Feature walkthrough and screenshots
+
+These screenshots were captured from the running local app using real uploads, downloads, filtering, validation, and deletion. They use synthetic example files only. The sample access ID belongs to a test file that is deleted at the end of the walkthrough. Example content is not added to your vault on startup.
+
+### 1. Overview
+
+View recent uploads, encrypted file count, and the sum of original file sizes. The size statistic excludes encryption overhead and database size.
+
+![Overview dashboard](docs/screenshots/01-overview.png)
+
+### 2. Encrypt and upload
+
+Choose or drop a file, enter an owner label, and set a password of at least 8 characters. Passwords must fit within bcrypt's 72-byte limit; non-ASCII characters can use more than one byte. The backend validates the limit.
+
+![Upload form with a selected file and owner](docs/screenshots/02-upload.png)
+
+### 3. Save and copy the access ID
+
+Store the ID and password somewhere safe. The ID remains visible until you choose **I've saved my ID. View my files**. Clipboard access uses the browser's local secure-context support; you can also select and copy the ID manually.
+
+![Upload success with generated access ID and copy action](docs/screenshots/03-access-id.png)
+
+### 4. Browse files
+
+The collection lists filenames, owner labels, original sizes, and upload dates. Refresh reloads metadata from the local backend.
+
+![File collection](docs/screenshots/04-files.png)
+
+### 5. Search and filter by owner
+
+Filename search is case-insensitive. Owner filtering matches the selected label exactly. Owner names are organizational labels, not signed-in accounts.
+
+![Filename search and owner filter](docs/screenshots/05-search-and-filter.png)
+
+### 6. Password validation
+
+An incorrect password produces a readable inline error and does not download the file.
+
+![Incorrect password validation](docs/screenshots/06-password-validation.png)
+
+### 7. Retrieve a file
+
+Enter its access ID and password, then choose **Decrypt & download**. AES-GCM verifies integrity before returning the original bytes.
+
+![Retrieve form](docs/screenshots/07-retrieve.png)
+
+### 8. Successful download
+
+The browser receives the original content and filename. The password field clears after success.
+
+![Successful file download feedback](docs/screenshots/08-download-success.png)
+
+### 9. Password-confirmed deletion
+
+Choose the trash icon, enter the file password, and confirm. **Keep file** cancels. Deletion removes both the encrypted blob and its database record; it cannot be undone in the app.
+
+![Permanent deletion confirmation](docs/screenshots/09-delete-confirmation.png)
+
+### 10. Mobile layout
+
+The navigation moves above the content. Forms stack vertically, and wide tables scroll within their own container.
+
+<img src="docs/screenshots/10-mobile.png" alt="CipherVault overview at a 390-pixel mobile viewport" width="390" />
+
+## How local storage works
+
+```text
+Browser at 127.0.0.1:5173
+  React + Vite
+       |
+       | /api proxy (same origin)
+       v
+FastAPI at 127.0.0.1:8000
+       |
+       +-- AES-256-GCM --> .local-data/blobs/<random-access-id>.bin
+       +-- bcrypt ------> .local-data/vault.db (password hashes + metadata)
+       +-- installation key --> .local-data/master.key
 ```
-http://localhost:5173
+
+| Path | Purpose |
+| --- | --- |
+| `backend/main.py` | Local REST API, input validation, upload, retrieval, and deletion |
+| `backend/encryption/crypto.py` | AES-GCM encryption and persistent installation key |
+| `backend/database.py` / `backend/models.py` | SQLite connection and metadata model |
+| `frontend/src/App.jsx` | Overview, upload, collection, retrieval, and dialogs |
+| `frontend/src/App.css` | Responsive sage-and-cream visual design |
+| `frontend/e2e/vault.spec.js` | Browser walkthrough and screenshot generation |
+| `tests/test_vault.py` | Isolated API and encryption regression tests |
+| `docs/screenshots/` | Actual screenshots embedded in this README |
+
+All private runtime data is stored in **`.local-data/`**, which is excluded from Git. The optional `CIPHERVAULT_DATA_DIR` environment variable changes that directory; normally you do not need to set anything. The older `storage/` sample is retained from the original repository and is not read by this version.
+
+### Backups and security boundaries
+
+- Stop the backend before backing up **the entire `.local-data/` directory together**, including `master.key`, `vault.db`, and `blobs/`.
+- The key persists across restarts. Losing or replacing it makes existing encrypted files unreadable. Never commit or share it.
+- File contents are encrypted at rest. Filenames, owner labels, MIME types, sizes, and timestamps are plaintext metadata in SQLite.
+- Passwords are bcrypt hashes. The password authorizes retrieval/deletion; encryption uses the installation key. This is server-side encryption, **not end-to-end encryption or a zero-knowledge vault**.
+- This is a **single-user local learning project**. Metadata listing has no login, account isolation, or session authentication. Anyone with access to the computer or local API can view metadata. Owner labels do not establish identity.
+- Keep both servers on `127.0.0.1`. This project has no public-server hardening, rate limiting, or deployment configuration. It is not intended to be exposed to a network.
+- No application password recovery exists. A person with filesystem access to the key and encrypted blobs can bypass the API's password check. Use OS account permissions and disk encryption to protect the device.
+- Existing Google Drive files from the previous cloud version are not migrated. This version creates a fresh local vault. The old random-per-process encryption key could not reliably decrypt files after a restart.
+
+## Local API
+
+Frontend calls use `/api` and are proxied to the following backend paths:
+
+| Method | Path | Input / result |
+| --- | --- | --- |
+| GET | `/` | Health and local storage mode |
+| POST | `/upload` | Multipart: `file`, `username`, `password`; returns generated `access_id` and numeric `file_id` |
+| GET | `/files` | All local metadata, newest first; excludes access IDs and password hashes |
+| GET | `/user-files/{username}` | Metadata for an exact owner label |
+| POST | `/download` | JSON: `access_id`, `password`; returns original bytes as an attachment |
+| DELETE | `/files/{id}` | JSON: `password`; deletes the matching blob and metadata |
+
+Passwords are sent in request bodies, not URL query strings. The browser UI communicates with the Vite proxy; the backend does not enable wildcard CORS.
+
+## Checks and screenshot reproduction
+
+Install test dependencies from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
----
+Use `.venv/bin/python` on macOS or Linux. Backend tests use a temporary directory and do not touch your personal vault. They cover exact-byte round trips, persistent key loading, Unicode download names, metadata filtering, wrong credentials, deletion, tamper detection, and upload limits.
 
-# 🔑 Environment Variables
+With both local servers running, in `frontend/`:
 
-Create a `.env` file inside the backend folder.
-
-```env
-DATABASE_URL=your_supabase_database_url
-
-GOOGLE_FOLDER_ID=your_google_drive_folder
-
-GOOGLE_TOKEN=your_google_token_json
+```powershell
+npm run lint
+npm run build
+npx playwright install chromium
+npm test
 ```
 
-Never commit these credentials to GitHub.
+The browser test creates synthetic files, exercises the real API through the UI, verifies the downloaded bytes and filename, checks mobile overflow and the offline state, and writes the ten README screenshots. It removes only the test files it created. `npm run build` is a compilation check; no hosting setup is included.
 
----
+To format frontend source and tests:
 
-# 💡 Challenges Faced
+```powershell
+npm run format
+```
 
-## 1. Secure Cloud Storage
+## Troubleshooting
 
-### Problem
+| Issue | What to check |
+| --- | --- |
+| Backend offline badge | Start the backend from the repository root on port 8000, then use reconnect. |
+| Port 5173 already in use | Stop the other process or the previous Vite session. This project uses a strict frontend port. |
+| Upload rejected | Select one file no larger than 25 MB; use a nonblank owner and an 8-to-72-byte password. |
+| Incorrect password / missing ID | Use the exact credentials saved after upload; metadata is not a recovery mechanism. |
+| File integrity check fails | Restore the matching blob and key from your backup. Do not generate a replacement key. |
+| Dependencies fail to install | Verify Python and Node versions and internet connectivity for the installation step. |
+| Old cloud files are absent | This local version uses its own database and encrypted blobs; cloud records are not imported. |
 
-Google Drive stores uploaded files as normal files.
-
-### Solution
-
-Implemented AES-GCM encryption before uploading and decrypted files only after successful authentication.
-
----
-
-## 2. Cloud Deployment
-
-### Problem
-
-Managing Google Drive credentials securely on Render.
-
-### Solution
-
-Moved credentials into environment variables and securely configured the backend.
-
----
-
-## 3. Database Migration
-
-### Problem
-
-Needed persistent metadata storage suitable for production.
-
-### Solution
-
-Migrated metadata storage to **Supabase PostgreSQL** using SQLAlchemy ORM without changing the application's business logic.
-
----
-
-## 4. Frontend–Backend Communication
-
-### Problem
-
-API requests failed after deployment due to localhost URLs and CORS restrictions.
-
-### Solution
-
-Configured FastAPI CORS middleware and updated the frontend to use production API endpoints.
-
----
-
-# 🚀 Future Improvements
-
-- JWT Authentication
-- Google OAuth Login
-- Email Verification
-- File Sharing
-- Expiring Download Links
-- One-Time Downloads
-- Upload Progress Bar
-- Drag & Drop Upload
-- Folder Support
-- Download Analytics
-
----
-
-# ⭐ Key Highlights
-
-- Full Stack React + FastAPI Application
-- RESTful API Architecture
-- AES-GCM Encryption
-- Password Hashing with bcrypt
-- Google Drive API Integration
-- SQLAlchemy ORM
-- Supabase PostgreSQL
-- Cloud Deployment
-- Production Environment Variables
-- Responsive UI
-
----
-
-# 👨‍💻 Author
-
-## Anmol Kapil
-
-**GitHub**
-
-https://github.com/Anmol-Kapil
-
-**LinkedIn**
-
-https://linkedin.com/in/anmol-kapil-4b4339263
-
----
-
-# 📜 License
-
-This project is developed for educational, learning, and portfolio purposes.
+Created by [Anmol Kapil](https://github.com/Anmol-Kapil). Intended for learning and portfolio use.
