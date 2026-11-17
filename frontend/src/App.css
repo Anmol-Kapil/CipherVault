@@ -1584,3 +1584,74 @@ input::placeholder {
 .access-code + .button > svg {
   margin-right: 0;
 }
+.storage-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  border: 1px solid #dce4cd;
+  background: #f3f6eb;
+  border-radius: 10px;
+  color: #6d8358;
+}
+.storage-banner > svg {
+  flex-shrink: 0;
+}
+.storage-banner > div {
+  flex: 1;
+}
+.storage-banner strong {
+  font-size: 13px;
+  color: #4d6740;
+}
+.storage-banner p {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #7a896b;
+}
+.storage-banner a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 11px;
+}
+.storage-banner .button {
+  flex-shrink: 0;
+}
+.demo-banner {
+  padding: 12px 16px;
+  border: 1px solid #e4dfcd;
+  background: #faf7eb;
+  border-radius: 8px;
+  font-size: 11px;
+  color: #8a805c;
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+@media (max-width: 900px) {
+  .storage-banner {
+    flex-wrap: wrap;
+  }
+  .storage-banner > div {
+    flex-basis: 80%;
+  }
+  .storage-banner .button {
+    margin-left: 36px;
+  }
+}
+@media (max-width: 620px) {
+  .connection {
+    max-width: 175px;
+  }
+  .eyebrow {
+    letter-spacing: 0.7px;
+  }
+  .storage-banner {
+    padding: 16px;
+  }
+}

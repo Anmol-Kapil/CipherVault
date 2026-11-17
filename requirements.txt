@@ -5,3 +5,7 @@ sqlalchemy==2.0.50
 pycryptodome==3.23.0
 passlib==1.7.4
 bcrypt==4.0.1
+google-api-python-client==2.197.0
+google-auth==2.54.0
+google-auth-oauthlib==1.4.0
+python-dotenv==1.2.2

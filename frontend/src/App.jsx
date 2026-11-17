@@ -106,6 +106,9 @@ export default function App() {
   const [page, setPage] = useState("overview");
   const [files, setFiles] = useState([]);
   const [status, setStatus] = useState("connecting");
+  const [storage, setStorage] = useState(null);
+  const [checkingDrive, setCheckingDrive] = useState(false);
+  const [lastStorage, setLastStorage] = useState("drive");
   const [notice, setNotice] = useState(null);
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState(null);
@@ -123,23 +126,30 @@ export default function App() {
 
   async function refresh() {
     try {
-      const response = await axios.get("/api/files");
+      const [response, health] = await Promise.all([
+        axios.get("/api/files"),
+        axios.get("/api/"),
+      ]);
       setFiles(response.data);
+      setStorage(health.data.storage);
       setStatus("online");
     } catch {
       setStatus("offline");
       setNotice({
         error: true,
-        text: "Cannot reach your local vault. Start the backend on port 8000, then refresh.",
+        text: "Cannot reach the local backend. Start it on port 8000, then reconnect.",
       });
     }
   }
   useEffect(() => {
     const controller = new AbortController();
-    axios
-      .get("/api/files", { signal: controller.signal })
-      .then(({ data }) => {
-        setFiles(data);
+    Promise.all([
+      axios.get("/api/files", { signal: controller.signal }),
+      axios.get("/api/", { signal: controller.signal }),
+    ])
+      .then(([response, health]) => {
+        setFiles(response.data);
+        setStorage(health.data.storage);
         setStatus("online");
       })
       .catch((error) => {
@@ -147,6 +157,22 @@ export default function App() {
       });
     return () => controller.abort();
   }, []);
+  async function checkDrive() {
+    setCheckingDrive(true);
+    setNotice(null);
+    try {
+      const { data } = await axios.post("/api/storage/check");
+      setStorage(data);
+    } catch (error) {
+      await errorNotice(error);
+    } finally {
+      setCheckingDrive(false);
+    }
+  }
+  const offlineDemo = storage?.backend === "local";
+  const destination = offlineDemo
+    ? "this device (offline demo)"
+    : "your Google Drive";
   async function errorNotice(error) {
     let detail = error.response?.data;
     if (detail instanceof Blob) {
@@ -187,6 +213,7 @@ export default function App() {
       form.append("username", username);
       form.append("password", password);
       const { data } = await axios.post("/api/upload", form);
+      setLastStorage(data.storage_backend);
       setAccessId(data.access_id);
       setDownloadId(data.access_id);
       setSelected(null);
@@ -239,7 +266,7 @@ export default function App() {
       setDeleting(null);
       setDeletePassword("");
       await refresh();
-      setNotice({ text: "File permanently deleted from this device." });
+      setNotice({ text: "File permanently deleted from its storage." });
     } catch (error) {
       await errorNotice(error);
     } finally {
@@ -294,7 +321,11 @@ export default function App() {
                         {file.filename.includes(".")
                           ? file.filename.split(".").pop().toUpperCase()
                           : "FILE"}{" "}
-                        <span>· Encrypted</span>
+                        <span>
+                          ·{" "}
+                          {file.storage_backend === "drive" ? "Drive" : "Local"}{" "}
+                          · Encrypted
+                        </span>
                       </small>
                     </div>
                   </div>
@@ -332,7 +363,7 @@ export default function App() {
         <p>
           {files.length
             ? "Try a different filename or owner."
-            : "Upload your first file and keep it encrypted on this device."}
+            : "Upload your first file and keep it encrypted in your own storage."}
         </p>
         {!files.length && (
           <button
@@ -383,7 +414,7 @@ export default function App() {
             <Icon name="shield" size={23} />
             <strong>Private by design.</strong>
             <p>
-              Encrypted files. Local storage.
+              Encrypted files. Your storage.
               <br />A space that stays yours.
             </p>
             <span>
@@ -391,10 +422,14 @@ export default function App() {
             </span>
           </div>
           <div className="local-profile">
-            <span className="avatar">L</span>
+            <span className="avatar">G</span>
             <div>
-              <strong>Local workspace</strong>
-              <small>This device only</small>
+              <strong>
+                {offlineDemo ? "Offline demo" : "Your Google Drive"}
+              </strong>
+              <small>
+                {offlineDemo ? "Local test storage" : "Your own account"}
+              </small>
             </div>
             <Icon name="lock" size={16} />
           </div>
@@ -409,7 +444,13 @@ export default function App() {
           <span className={`connection ${status}`}>
             <i />
             {status === "online"
-              ? "Local vault connected"
+              ? offlineDemo
+                ? "Offline demo"
+                : storage?.verified
+                  ? "Drive connected"
+                  : storage?.configured
+                    ? "Drive configured"
+                    : "Drive setup needed"
               : status === "offline"
                 ? "Backend offline"
                 : "Connecting to vault"}
@@ -419,7 +460,7 @@ export default function App() {
           <div className="page-heading">
             <div>
               <div className="eyebrow">
-                YOUR PRIVATE CORNER OF THE INTERNET. MINUS THE INTERNET.
+                YOUR FILES. YOUR GOOGLE DRIVE. YOUR PEACE OF MIND.
               </div>
               <h1>{title}</h1>
               <p>
@@ -428,7 +469,7 @@ export default function App() {
                   : page === "upload"
                     ? "Encrypt a file and make yourself at home."
                     : page === "files"
-                      ? "Browse, find, and manage your locally encrypted files."
+                      ? "Browse, find, and manage your encrypted files."
                       : "Retrieve an original file with its access ID and password."}
               </p>
             </div>
@@ -445,6 +486,50 @@ export default function App() {
             <div className="notice error" role="alert">
               Your backend is offline. Run the local server, then{" "}
               <button onClick={refresh}>reconnect</button>.
+            </div>
+          )}
+          {status === "online" && storage?.backend === "drive" && (
+            <div
+              className={`storage-banner ${storage.verified ? "verified" : ""}`}
+              aria-label="Storage connection"
+            >
+              <Icon name="shield" size={22} />
+              <div>
+                <strong>
+                  {storage.verified
+                    ? "Your Google Drive is connected"
+                    : storage.configured
+                      ? "Your Google Drive credentials are configured"
+                      : "Connect your own Google Drive"}
+                </strong>
+                <p>
+                  {storage.message} Metadata and your encryption key stay on
+                  this computer.
+                </p>
+                {!storage.configured && (
+                  <a
+                    href="https://github.com/Anmol-Kapil/CipherVault#2-connect-your-own-google-drive"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open the Google Drive setup guide{" "}
+                    <Icon name="arrow" size={13} />
+                  </a>
+                )}
+              </div>
+              <button
+                className="button secondary"
+                onClick={checkDrive}
+                disabled={checkingDrive || !storage.configured}
+              >
+                {checkingDrive ? "Checking…" : "Check Drive connection"}
+              </button>
+            </div>
+          )}
+          {status === "online" && offlineDemo && (
+            <div className="demo-banner">
+              Offline demo mode · Files stay on this device. Google Drive is the
+              default for normal use.
             </div>
           )}
           {notice && (
@@ -468,7 +553,7 @@ export default function App() {
               <section className="hero">
                 <div className="hero-copy">
                   <span className="pill">
-                    <span /> A VAULT, NOT A CLOUD
+                    <span /> ENCRYPT FIRST. STORE IN YOUR DRIVE.
                   </span>
                   <h2>
                     Keep it close.
@@ -476,9 +561,11 @@ export default function App() {
                     Keep it <em>yours.</em>
                   </h2>
                   <p>
-                    Your important files, encrypted and stored right here.
+                    Your important files, encrypted before they leave the app.
                     <br />
-                    No cloud accounts. No complicated setup. Just you.
+                    {offlineDemo
+                      ? "Offline demo storage on this device."
+                      : "Your own Google account. Your own private vault."}
                   </p>
                   <button
                     className="text-button"
@@ -509,7 +596,7 @@ export default function App() {
                     </div>
                   </div>
                   <span className="art-tag">
-                    <Icon name="shield" size={14} /> Locally protected
+                    <Icon name="shield" size={14} /> Encrypted before upload
                   </span>
                 </div>
               </section>
@@ -532,7 +619,7 @@ export default function App() {
                     <p>Original file size</p>
                     <strong>{bytes(total)}</strong>
                   </div>
-                  <span className="stat-label">ON THIS DEVICE</span>
+                  <span className="stat-label">ORIGINAL BYTES</span>
                 </div>
                 <div className="stat">
                   <span className="stat-symbol green">
@@ -565,8 +652,8 @@ export default function App() {
                 {fileTable(files.slice(0, 4))}
               </section>
               <div className="bottom-note">
-                <Icon name="lock" size={14} /> Your files stay on your device.
-                Always within reach.
+                <Icon name="lock" size={14} /> Files encrypted in {destination}.
+                Your key stays on this computer.
               </div>
             </>
           )}
@@ -653,7 +740,9 @@ export default function App() {
                   </div>
                   <button
                     className="button primary wide"
-                    disabled={busy || status !== "online"}
+                    disabled={
+                      busy || status !== "online" || !storage?.configured
+                    }
                   >
                     <Icon name="lock" size={17} />
                     {busy ? "Encrypting & saving…" : "Encrypt & save file"}
@@ -677,8 +766,8 @@ export default function App() {
                   <li>
                     <strong>Make it private</strong>
                     <p>
-                      AES-256-GCM encrypts your file before it reaches local
-                      storage.
+                      AES-256-GCM encrypts your file before it reaches{" "}
+                      {destination}.
                     </p>
                   </li>
                   <li>
@@ -690,8 +779,8 @@ export default function App() {
                   </li>
                 </ol>
                 <div className="info-foot">
-                  <Icon name="lock" size={15} /> Nothing is uploaded to the
-                  cloud.
+                  <Icon name="lock" size={15} /> Only encrypted file content
+                  reaches your storage.
                 </div>
               </aside>
             </div>
@@ -703,7 +792,7 @@ export default function App() {
                   <h2>
                     Your file collection <span>{files.length}</span>
                   </h2>
-                  <p>Encrypted on disk. Easy to find here.</p>
+                  <p>Encrypted in your storage. Easy to find here.</p>
                 </div>
                 <button className="button secondary" onClick={refresh}>
                   <Icon name="refresh" size={16} />
@@ -826,7 +915,7 @@ export default function App() {
               CipherVault <span className="footer-dot">/</span> A little privacy
               goes a long way.
             </span>
-            <span>LOCAL FIRST. ALWAYS YOURS.</span>
+            <span>YOUR ACCOUNT. YOUR DRIVE. YOUR FILES.</span>
           </footer>
         </main>
       </div>
@@ -845,7 +934,11 @@ export default function App() {
             <div className="eyebrow">SAFELY TUCKED AWAY</div>
             <h2 id="saved-title">One less thing to worry about.</h2>
             <p>
-              Your file is encrypted and saved on this device.
+              Your file is encrypted and saved in{" "}
+              {lastStorage === "local"
+                ? "offline demo storage"
+                : "your Google Drive"}
+              .
               <br />
               Keep this access ID and your password somewhere safe.
             </p>
@@ -904,7 +997,11 @@ export default function App() {
             <h2 id="delete-title">Let this file go?</h2>
             <p>
               <strong>{deleting.filename}</strong> will be permanently deleted
-              from this device. This cannot be undone.
+              from{" "}
+              {deleting.storage_backend === "drive"
+                ? "Google Drive"
+                : "this device"}
+              . This cannot be undone.
             </p>
             <form onSubmit={remove}>
               <label>

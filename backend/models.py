@@ -11,3 +11,5 @@ class FileMetadata(Base):
     size = Column(Integer, nullable=False)
     password_hash = Column(String, nullable=False)
     upload_date = Column(String, nullable=False)
+    storage_backend = Column(String, nullable=False, default='drive')
+    storage_id = Column(String, nullable=True)

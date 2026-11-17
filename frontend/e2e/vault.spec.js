@@ -41,6 +41,11 @@ test("local vault feature walkthrough and screenshots", async ({
   ];
   // Only synthetic data is created; clean up only these IDs after the test.
   try {
+    const health = await (await request.get("/api/")).json();
+    expect(
+      health.storage.backend,
+      "Run the screenshot walkthrough with CIPHERVAULT_STORAGE=local and a separate CIPHERVAULT_DATA_DIR; it never uses your real Google Drive.",
+    ).toBe("local");
     for (const [filename, content, username] of examples) {
       const response = await request.post("/api/upload", {
         multipart: {
@@ -59,7 +64,9 @@ test("local vault feature walkthrough and screenshots", async ({
       expect(access_id).toBeTruthy();
     }
     await page.goto("/");
-    await expect(page.getByText("Local vault connected")).toBeVisible();
+    await expect(
+      page.getByText("Offline demo", { exact: true }).first(),
+    ).toBeVisible();
     await expect(
       page.getByRole("heading", { name: "Your files. Your space." }),
     ).toBeVisible();
@@ -181,4 +188,67 @@ test("local vault feature walkthrough and screenshots", async ({
     for (const id of seedIds)
       await request.delete(`/api/files/${id}`, { data: { password } });
   }
+});
+
+test("Drive setup and connection states are distinct from backend offline", async ({
+  page,
+}) => {
+  let configured = false;
+  await page.route("**/api/", (route) =>
+    route.fulfill({
+      json: {
+        status: "ok",
+        storage: {
+          backend: "drive",
+          configured,
+          verified: false,
+          message: configured
+            ? "OAuth credentials found."
+            : "Connect your Google Drive using the README.",
+        },
+      },
+    }),
+  );
+  await page.route("**/api/files", (route) => route.fulfill({ json: [] }));
+  await page.goto("/");
+  await expect(
+    page.getByText("Drive setup needed", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Google Drive setup guide/ }),
+  ).toBeVisible();
+  await page
+    .getByRole("navigation")
+    .getByRole("button", { name: "Upload file" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Encrypt & save file" }),
+  ).toBeDisabled();
+  await page.screenshot({
+    path: path.join(screenshotDir, "11-drive-setup.png"),
+    fullPage: true,
+  });
+  configured = true;
+  await page.reload();
+  await expect(
+    page.getByText("Drive configured", { exact: true }),
+  ).toBeVisible();
+  await page.route("**/api/storage/check", (route) =>
+    route.fulfill({
+      json: {
+        backend: "drive",
+        configured: true,
+        verified: true,
+        message: "Google Drive connection verified.",
+      },
+    }),
+  );
+  await page.getByRole("button", { name: "Check Drive connection" }).click();
+  await expect(
+    page.getByText("Drive connected", { exact: true }),
+  ).toBeVisible();
+  await page.screenshot({
+    path: path.join(screenshotDir, "12-drive-connection.png"),
+    fullPage: true,
+  });
 });

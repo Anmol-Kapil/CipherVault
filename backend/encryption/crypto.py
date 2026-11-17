@@ -3,10 +3,15 @@ import base64
 import json
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
-from backend.database import DATA_DIR
+from backend.database import DATA_DIR, engine
+from sqlalchemy import inspect, text
 
 KEY_PATH = DATA_DIR / 'master.key'
 if not KEY_PATH.exists():
+    if inspect(engine).has_table('files'):
+        with engine.connect() as connection:
+            if connection.execute(text('SELECT COUNT(*) FROM files')).scalar():
+                raise RuntimeError('master.key is missing but file records exist. Restore the original key from backup.')
     if (DATA_DIR / 'blobs').exists() and any((DATA_DIR / 'blobs').glob('*.bin')):
         raise RuntimeError('master.key is missing but encrypted files exist. Restore the original key from backup.')
     try:

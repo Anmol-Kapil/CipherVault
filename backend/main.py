@@ -1,19 +1,18 @@
-"""Single-user, loopback-only file vault. Run from the repository root."""
+"""Locally run file vault backed by the user's own Google Drive. Run from the repository root."""
 from datetime import datetime, timezone
 from urllib.parse import quote
 import secrets
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import Response
+from fastapi.responses import Response, JSONResponse
 from passlib.hash import bcrypt
 from pydantic import BaseModel, Field
-from backend.database import DATA_DIR, Base, SessionLocal, engine
+from backend.database import SessionLocal, initialize_database
 from backend.models import FileMetadata
 from backend.encryption.crypto import encrypt_data, decrypt_data
+from backend import storage_service as storage
 
-app = FastAPI(title='CipherVault Local', version='2.0.0')
-Base.metadata.create_all(bind=engine)
-BLOBS = DATA_DIR / 'blobs'
-BLOBS.mkdir(exist_ok=True)
+app = FastAPI(title='CipherVault Drive', version='2.1.0')
+initialize_database()
 MAX_SIZE = 25 * 1024 * 1024
 
 class Credentials(BaseModel):
@@ -26,7 +25,15 @@ def verify_password(password, stored_hash):
 
 @app.get('/')
 def health():
-    return {'status': 'ok', 'storage': 'local', 'max_file_size': MAX_SIZE}
+    return {'status': 'ok', 'storage': storage.storage_status(), 'max_file_size': MAX_SIZE}
+
+@app.exception_handler(storage.StorageError)
+async def storage_error_handler(request, error):
+    return JSONResponse(status_code=503, content={'detail': str(error)})
+
+@app.post('/storage/check')
+def check_storage():
+    return storage.check()
 
 @app.post('/upload', status_code=201)
 async def upload(file: UploadFile = File(...), username: str = Form(...), password: str = Form(...)):
@@ -39,21 +46,27 @@ async def upload(file: UploadFile = File(...), username: str = Form(...), passwo
     if len(data) > MAX_SIZE:
         raise HTTPException(413, 'Files must be 25 MB or smaller.')
     access_id = secrets.token_urlsafe(18)
-    blob = BLOBS / f'{access_id}.bin'
-    blob.write_bytes(encrypt_data(data))
+    storage_backend, storage_id = storage.save(encrypt_data(data), access_id)
     try:
         with SessionLocal() as db:
             entry = FileMetadata(access_id=access_id, username=username,
                 filename=(file.filename or 'download').replace('\\', '/').split('/')[-1],
                 mime_type=file.content_type or 'application/octet-stream', size=len(data),
-                password_hash=bcrypt.hash(password), upload_date=datetime.now(timezone.utc).isoformat())
+                password_hash=bcrypt.hash(password), upload_date=datetime.now(timezone.utc).isoformat(),
+                storage_backend=storage_backend, storage_id=storage_id)
             db.add(entry)
-            db.commit()
+            db.flush()
             file_id = entry.id
+            db.commit()
     except Exception:
-        blob.unlink(missing_ok=True)
+        # Roll back the uploaded object if metadata persistence fails.
+        try:
+            from types import SimpleNamespace
+            storage.remove(SimpleNamespace(storage_backend=storage_backend, storage_id=storage_id, access_id=access_id))
+        except storage.StorageError:
+            pass
         raise
-    return {'message': 'File encrypted and saved locally.', 'access_id': access_id, 'file_id': file_id}
+    return {'message': 'File encrypted and saved.', 'access_id': access_id, 'file_id': file_id, 'storage_backend': storage_backend}
 
 @app.get('/files')
 @app.get('/user-files/{username}')
@@ -62,7 +75,7 @@ def list_files(username: str | None = None):
         query = db.query(FileMetadata)
         if username:
             query = query.filter(FileMetadata.username == username)
-        return [{key: getattr(item, key) for key in ('id', 'username', 'filename', 'mime_type', 'size', 'upload_date')}
+        return [{key: getattr(item, key) for key in ('id', 'username', 'filename', 'mime_type', 'size', 'upload_date', 'storage_backend')}
                 for item in query.order_by(FileMetadata.id.desc()).all()]
 
 @app.post('/download')
@@ -73,7 +86,7 @@ def download(credentials: Credentials):
             raise HTTPException(404, 'No file matches that access ID.')
         verify_password(credentials.password, entry.password_hash)
         try:
-            data = decrypt_data((BLOBS / f'{entry.access_id}.bin').read_bytes())
+            data = decrypt_data(storage.load(entry))
         except FileNotFoundError:
             raise HTTPException(404, 'The encrypted file is missing from local storage.')
         except ValueError:
@@ -92,7 +105,7 @@ def delete(file_id: int, credentials: DeleteCredentials):
         if not entry:
             raise HTTPException(404, 'File not found.')
         verify_password(credentials.password, entry.password_hash)
-        (BLOBS / f'{entry.access_id}.bin').unlink(missing_ok=True)
+        storage.remove(entry)
         db.delete(entry)
         db.commit()
-    return {'message': 'File permanently deleted.'}
+    return {'message': 'File permanently deleted from its storage.'}
