@@ -1,5 +1,11 @@
 # CipherVault
 
+## Before and after
+
+**Before:** CipherVault used Google Drive for encrypted files, Supabase PostgreSQL for metadata, and Vercel/Render hosting, with a basic single-page interface.
+
+**After:** CipherVault runs locally with encrypted files on your device, SQLite metadata, and a persistent encryption key. We redesigned the responsive UI, improved file management, and added tested feature screenshots and local setup instructions. No cloud services or deployment are required.
+
 ### Keep it close. Keep it yours.
 
 A private file vault for your own computer, with a calm sage interface, encrypted local storage, and password-protected retrieval. Built with React, FastAPI, SQLite, and AES-256-GCM.
